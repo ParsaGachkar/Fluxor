@@ -12,18 +12,18 @@ namespace Fluxor.Blazor.Web.Middlewares.Routing
 	internal class RoutingMiddleware : Middleware
 	{
 		private readonly NavigationManager NavigationManager;
-		private readonly IFeature<RoutingState> Feature;
+		private readonly IState<RoutingState> State;
 		private IDispatcher Dispatcher;
 
 		/// <summary>
 		/// Creates a new instance of the routing middleware
 		/// </summary>
 		/// <param name="navigationManager">Uri helper</param>
-		/// <param name="feature">The routing feature</param>
-		public RoutingMiddleware(NavigationManager navigationManager, IFeature<RoutingState> feature)
+		/// <param name="state">The routing feature</param>
+		public RoutingMiddleware(NavigationManager navigationManager, IState<RoutingState> state)
 		{
 			NavigationManager = navigationManager;
-			Feature = feature;
+			State = state;
 			NavigationManager.LocationChanged += LocationChanged;
 		}
 
@@ -39,13 +39,13 @@ namespace Fluxor.Blazor.Web.Middlewares.Routing
 		/// <see cref="Middleware.OnInternalMiddlewareChangeEnding"/>
 		protected override void OnInternalMiddlewareChangeEnding()
 		{
-			if (Feature.State.Uri != NavigationManager.Uri && Feature.State.Uri != null)
-				NavigationManager.NavigateTo(Feature.State.Uri);
+			if (State.Value.Uri != NavigationManager.Uri && State.Value.Uri != null)
+				NavigationManager.NavigateTo(State.Value.Uri);
 		}
 
 		private void LocationChanged(object sender, LocationChangedEventArgs e)
 		{
-			if (Dispatcher != null && !IsInsideMiddlewareChange && e.Location != Feature.State.Uri)
+			if (Dispatcher != null && !IsInsideMiddlewareChange && e.Location != State.Value.Uri)
 				Dispatcher.Dispatch(new GoAction(e.Location));
 		}
 	}
