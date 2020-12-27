@@ -44,3 +44,11 @@ using (Store.BeginMiddlewareChange())
 not called `Dispose()` on the result.
 
 **Fix:** You must call `Dispose`
+
+
+###  Not calling Base Method on overrides of `FluxorComponent` or `FluxorLayout`
+**Problem:** You have Overrided e.g. `OnInitializedAsync` and
+not called `await base.OnInitializedAsync()` inside the method.
+
+**Fix:** You must call `await base.OnInitializedAsync()`
+this applies to all non abstract methods
